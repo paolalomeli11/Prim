@@ -39,23 +39,20 @@ def comprobarMedios(i, j, th2):
 def algoritmoPrim(vertices, mAdy, visitados):
     camino = []
     tam = len(vertices)
-
     first_key = list(visitados)[0]
     visitados[first_key] = True
-    INF = 999999
+    MAX = 999999
     count = 0
 
     while count < tam - 1:
- 
-        min = INF
-
+        min = MAX
         for m in visitados:
             if visitados[m]:
                 for n,ady in enumerate(mAdy[m]):
                     if ady[0] < min:
                         ib = ady[2]
                         k = str(ib[0]) + ',' + str(ib[1])
-                        #si la coordenada 2 ya esta en visitados no se toma en cuenta
+                        #Para evitar bucles
                         if(not visitados[k]):
                             eX = m
                             eY = n
@@ -64,17 +61,16 @@ def algoritmoPrim(vertices, mAdy, visitados):
         x = mAdy[eX][eY][1]
         y = mAdy[eX][eY][2]
 
-        key1 = str(x[0]) + ',' + str(x[1])
+        key1 = str(x[0]) + ',' + str(x[1]) 
         key2 = str(y[0]) + ',' + str(y[1])
         visitados[key2] = True
         camino.append([vertices[key1],vertices[key2]])
         del mAdy[key1][eY]
         count += 1
 
-
     return camino
     
-mapa=cv2.imread('mapa.png')
+mapa=cv2.imread('mapa3.png')
 gray = cv2.cvtColor(mapa,cv2.COLOR_BGR2GRAY)
 ret,th1 = cv2.threshold(gray,254,255,cv2.THRESH_BINARY)
 
@@ -95,12 +91,8 @@ vertices=np.int0(centroids)
 aux1=vertices
 aux2=vertices
 verticesConectados={}
-matAdy = {}
-aristas=[]
-aristas2=[]
-conectado = False
+aristas = {}
 visitados = {}
-vertices2 = []
 
 #aqui voy a buscar cuales son las esquinas que estan conectadas
 for h in range(len(aux1)):
@@ -110,7 +102,7 @@ for h in range(len(aux1)):
     for k in range(len(aux2)):
         j=aux2[k]
         if not (i==j).all():
-            if not isInTheList([i,j], aristas) and comprobarMedios(i,j,th2):
+            if comprobarMedios(i,j,th2):
                 costo = int(math.sqrt((j[0]-i[0])**2 + (j[1]-i[1])**2))
                 conectado = True
                 ady.append([costo,i,j])
@@ -118,19 +110,16 @@ for h in range(len(aux1)):
     if conectado:
         key = str(i[0]) + ',' + str(i[1])
         verticesConectados.update({key:i})
-        vertices2.append(i)
         visitados.update({key:False})
-        matAdy.update({key:ady})
+        aristas.update({key:ady})
 
-primero = vertices2[0]
-
-aristas2 = algoritmoPrim(verticesConectados, matAdy, visitados)
+aristas2 = algoritmoPrim(verticesConectados, aristas, visitados)
 
 for arista in aristas2:
-    cv2.line(th2, tuple(arista[0]), tuple(arista[1]), (0,255,0), 2)
+    cv2.line(th2, tuple(arista[0]), tuple(arista[1]), (255,182,193), 2)
 
 for point in vertices:
-    cv2.circle(th2,(point[0], point[1]), 5, (255,0,0), -1)    
+    cv2.circle(th2,(point[0], point[1]), 5, (255,20,147), -1)    
     cv2.waitKey(0)
 
 cv2.imshow('points',th2)
