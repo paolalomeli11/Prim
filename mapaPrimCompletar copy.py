@@ -37,37 +37,36 @@ def comprobarMedios(i, j, th2):
     return conectado
 
 
-def algoritmoPrim(vertices, mAdy):
+def algoritmoPrim(vertices, mAdy, visitados):
     camino = []
     tam = len(vertices)
-    visitados = np.full(tam, False)
-    visitados[0] = True
+
+    first_key = list(visitados)[0]
+    visitados[first_key] = True
     INF = 999999
     count = 0
     found = False
 
-    print(matAdy)
-
     while count < tam - 1:
-        a = 0
-        b = 0
+        ia = 0
+        ib = 0
         min = INF
         found = False
 
-        for m in range(tam):
+        for m in visitados:
             if visitados[m]:
-                for n in range(tam):
-                    if ((not visitados[n]) and mAdy[m][n]):
-                        print("xasda")
-                        if min > mAdy[m][n]:
-                            min = mAdy[m][n]
-                            a = m
-                            b = n
-                            found = True
-
+                for n,ady in enumerate(mAdy[m]):
+                    if ady[0] < min:
+                        min = ady[0]
+                        ia = ady[1]
+                        ib = ady[2]
+                        found = True
+        
         if found:
-            camino.append([vertices[a],vertices[b]])
-        visitados[b] = True
+            key1 = str(ia[0]) + ',' + str(ia[1])
+            key2 = str(ib[0]) + ',' + str(ib[1])
+            visitados[key2] = True
+            camino.append([vertices[key1],vertices[key2]])
         count += 1
 
 
@@ -94,35 +93,40 @@ vertices=np.int0(centroids)
 
 aux1=vertices
 aux2=vertices
-verticesConectados=[]
-matAdy = []
+verticesConectados={}
+matAdy = {}
 aristas=[]
 aristas2=[]
 conectado = False
+visitados = {}
+vertices2 = []
 
 #aqui voy a buscar cuales son las esquinas que estan conectadas
 for h in range(len(aux1)):
     i=aux1[h]
     ady = []
+    conectado = False
     for k in range(h,len(aux2)):
         j=aux2[k]
-        conectado = False
         if not (i==j).all():
             if not isInTheList([i,j], aristas) and comprobarMedios(i,j,th2):
                 costo = int(math.sqrt((j[0]-i[0])**2 + (j[1]-i[1])**2))
-                aristas.append([i,j,costo])
-                ady.append(costo)
                 conectado = True
-            else:
-                ady.append(0)
-        else:
-            ady.append(0)
+                ady.append([costo,i,j])
+        
     if conectado:
-        verticesConectados.append(i)
-    matAdy.append(ady)
+        key = str(i[0]) + ',' + str(i[1])
+        verticesConectados.update({key:i})
+        vertices2.append(i)
+        visitados.update({key:False})
+        matAdy.update({key:ady})
+
+primero = vertices2[0]
 
 
-aristas2 = algoritmoPrim(verticesConectados, matAdy)
+
+
+aristas2 = algoritmoPrim(verticesConectados, matAdy, visitados)
 
 for arista in aristas2:
     cv2.line(th2, tuple(arista[0]), tuple(arista[1]), (0,255,0), 1)
