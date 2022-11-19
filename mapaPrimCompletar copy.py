@@ -46,27 +46,34 @@ def algoritmoPrim(vertices, mAdy, visitados):
     INF = 999999
     count = 0
     found = False
+    eX = 0
+    eY = 0
 
+    f_k = list(visitados)[0]
+    ia = mAdy[f_k][0][1]
+    ib = mAdy[f_k][0][2]
     while count < tam - 1:
-        ia = 0
-        ib = 0
+ 
         min = INF
-        found = False
+
 
         for m in visitados:
             if visitados[m]:
                 for n,ady in enumerate(mAdy[m]):
                     if ady[0] < min:
+                        #si la coordenada 2 ya esta en visitados no se toma en cuenta
+                        eX = m
+                        eY = n
                         min = ady[0]
-                        ia = ady[1]
-                        ib = ady[2]
-                        found = True
         
-        if found:
-            key1 = str(ia[0]) + ',' + str(ia[1])
-            key2 = str(ib[0]) + ',' + str(ib[1])
-            visitados[key2] = True
-            camino.append([vertices[key1],vertices[key2]])
+        x = mAdy[eX][eY][1]
+        y = mAdy[eX][eY][2]
+
+        key1 = str(x[0]) + ',' + str(x[1])
+        key2 = str(y[0]) + ',' + str(y[1])
+        visitados[key2] = True
+        camino.append([vertices[key1],vertices[key2]])
+        del mAdy[key1][eY]
         count += 1
 
 
@@ -106,7 +113,7 @@ for h in range(len(aux1)):
     i=aux1[h]
     ady = []
     conectado = False
-    for k in range(h,len(aux2)):
+    for k in range(len(aux2)):
         j=aux2[k]
         if not (i==j).all():
             if not isInTheList([i,j], aristas) and comprobarMedios(i,j,th2):
