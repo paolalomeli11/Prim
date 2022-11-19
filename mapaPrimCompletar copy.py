@@ -36,7 +36,6 @@ def comprobarMedios(i, j, th2):
 
     return conectado
 
-
 def algoritmoPrim(vertices, mAdy, visitados):
     camino = []
     tam = len(vertices)
@@ -45,26 +44,22 @@ def algoritmoPrim(vertices, mAdy, visitados):
     visitados[first_key] = True
     INF = 999999
     count = 0
-    found = False
-    eX = 0
-    eY = 0
 
-    f_k = list(visitados)[0]
-    ia = mAdy[f_k][0][1]
-    ib = mAdy[f_k][0][2]
     while count < tam - 1:
  
         min = INF
-
 
         for m in visitados:
             if visitados[m]:
                 for n,ady in enumerate(mAdy[m]):
                     if ady[0] < min:
+                        ib = ady[2]
+                        k = str(ib[0]) + ',' + str(ib[1])
                         #si la coordenada 2 ya esta en visitados no se toma en cuenta
-                        eX = m
-                        eY = n
-                        min = ady[0]
+                        if(not visitados[k]):
+                            eX = m
+                            eY = n
+                            min = ady[0]
         
         x = mAdy[eX][eY][1]
         y = mAdy[eX][eY][2]
@@ -79,7 +74,6 @@ def algoritmoPrim(vertices, mAdy, visitados):
 
     return camino
     
-
 mapa=cv2.imread('mapa.png')
 gray = cv2.cvtColor(mapa,cv2.COLOR_BGR2GRAY)
 ret,th1 = cv2.threshold(gray,254,255,cv2.THRESH_BINARY)
@@ -130,13 +124,10 @@ for h in range(len(aux1)):
 
 primero = vertices2[0]
 
-
-
-
 aristas2 = algoritmoPrim(verticesConectados, matAdy, visitados)
 
 for arista in aristas2:
-    cv2.line(th2, tuple(arista[0]), tuple(arista[1]), (0,255,0), 1)
+    cv2.line(th2, tuple(arista[0]), tuple(arista[1]), (0,255,0), 2)
 
 for point in vertices:
     cv2.circle(th2,(point[0], point[1]), 5, (255,0,0), -1)    
