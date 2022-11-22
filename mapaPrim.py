@@ -58,19 +58,18 @@ def algoritmoPrim(vertices, mAdy, visitados):
                             eY = n
                             min = ady[0]
         
-        x = mAdy[eX][eY][1]
-        y = mAdy[eX][eY][2]
+        a = mAdy[eX][eY][1]
+        b = mAdy[eX][eY][2]
 
-        key1 = str(x[0]) + ',' + str(x[1]) 
-        key2 = str(y[0]) + ',' + str(y[1])
+        key1 = str(a[0]) + ',' + str(a[1]) 
+        key2 = str(b[0]) + ',' + str(b[1])
         visitados[key2] = True
         camino.append([vertices[key1],vertices[key2]])
-        del mAdy[key1][eY]
         count += 1
 
     return camino
     
-mapa=cv2.imread('mapa3.png')
+mapa=cv2.imread('mapa.png')
 gray = cv2.cvtColor(mapa,cv2.COLOR_BGR2GRAY)
 ret,th1 = cv2.threshold(gray,254,255,cv2.THRESH_BINARY)
 
