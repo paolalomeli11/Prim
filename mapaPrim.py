@@ -36,36 +36,30 @@ def comprobarMedios(i, j, th2):
 
     return conectado
 
-def algoritmoPrim(vertices, mAdy, visitados):
+def algoritmoPrim(mAdy, visitados):
     camino = []
-    tam = len(vertices)
+    tam = len(visitados)
     first_key = list(visitados)[0]
     visitados[first_key] = True
     MAX = 999999
-    count = 0
 
-    while count < tam - 1:
+    for count in range(tam):
         min = MAX
         for m in visitados:
             if visitados[m]:
-                for n,ady in enumerate(mAdy[m]):
+                for ady in mAdy[m]:
                     if ady[0] < min:
                         ib = ady[2]
                         k = str(ib[0]) + ',' + str(ib[1])
                         #Para evitar bucles
                         if(not visitados[k]):
-                            eX = m
-                            eY = n
                             min = ady[0]
-        
-        a = mAdy[eX][eY][1]
-        b = mAdy[eX][eY][2]
+                            a = ady[1]
+                            b = ady[2]
 
-        key1 = str(a[0]) + ',' + str(a[1]) 
         key2 = str(b[0]) + ',' + str(b[1])
         visitados[key2] = True
-        camino.append([vertices[key1],vertices[key2]])
-        count += 1
+        camino.append([a,b])
 
     return camino
     
@@ -89,7 +83,6 @@ vertices=np.int0(centroids)
 
 aux1=vertices
 aux2=vertices
-verticesConectados={}
 aristas = {}
 visitados = {}
 
@@ -108,11 +101,10 @@ for h in range(len(aux1)):
         
     if conectado:
         key = str(i[0]) + ',' + str(i[1])
-        verticesConectados.update({key:i})
         visitados.update({key:False})
         aristas.update({key:ady})
 
-aristas2 = algoritmoPrim(verticesConectados, aristas, visitados)
+aristas2 = algoritmoPrim(aristas, visitados)
 
 for arista in aristas2:
     cv2.line(th2, tuple(arista[0]), tuple(arista[1]), (255,182,193), 2)
